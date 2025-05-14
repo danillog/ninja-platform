@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://6ur6snhln2al"]
+
+[ext_resource type="Texture2D" uid="uid://b61kh53tq13dj" path="res://assets/drone_enemy.png" id="1_f3sb7"]
+
+[node name="World" type="Node2D"]
+
+[node name="DroneEnemy" type="Sprite2D" parent="."]
+position = Vector2(40, 27)
+texture = ExtResource("1_f3sb7")
