@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://d1ucsekamc3j8"]
+[gd_scene load_steps=17 format=3 uid="uid://d1ucsekamc3j8"]
 
 [ext_resource type="Script" uid="uid://d4ghmn58fe0oi" path="res://scripts/player.gd" id="1_i3pqv"]
 [ext_resource type="Texture2D" uid="uid://ca1idmwql8kke" path="res://assets/ninja_upper.png" id="2_hqtel"]
@@ -72,9 +72,26 @@ tracks/0/keys = {
 "values": [0, 1, 2, 3, 4, 5]
 }
 
+[sub_resource type="Animation" id="Animation_nvl01"]
+resource_name = "attack"
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Anchor/SpriteUpper:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [7, 8, 9]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_dw050"]
 _data = {
 &"RESET": SubResource("Animation_1jxqw"),
+&"attack": SubResource("Animation_nvl01"),
 &"idle": SubResource("Animation_2hs0m"),
 &"jump": SubResource("Animation_b26j0"),
 &"run": SubResource("Animation_dw050")
