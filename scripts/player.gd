@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+enum STATES  {MOVE, CLIMB, }
+
 @onready var anchor: Node2D = $Anchor
 @onready var animation_player_lower: AnimationPlayer = $AnimationPlayerLower
 @onready var animation_player_upper: AnimationPlayer = $AnimationPlayerUpper
@@ -18,6 +20,10 @@ extends CharacterBody2D
 @export var down_gravity: = 600.0
 @export var jump_amount: = 400.0
 
+@export var state: = STATES.MOVE  
+
+var coyote_time = 0
+
 var fall_start_position: float = 0.0
 var was_on_floor: bool = true
 
@@ -33,38 +39,49 @@ func _ready() -> void:
 	)
 
 func _physics_process(delta: float) -> void:
-	var x_input = Input.get_axis("move_left", "move_right")
-	
-	# DETECTA INÍCIO DA QUEDA
-	if was_on_floor and not is_on_floor():
-		fall_start_position = global_position.y
-	
-	apply_gravity(delta)
-	
-	if not was_on_floor and is_on_floor():
-		var fall_height = global_position.y - fall_start_position
-		check_fall_damage(fall_height)
-	
-	was_on_floor = is_on_floor()
-	
-	if Input.is_action_just_pressed("attack"):
-		animation_player_upper.play("attack")
-	
-	if Input.is_action_just_pressed("jump") and is_on_floor():
-		velocity.y = -jump_amount
-	
-	if(x_input == 0):
-		apply_friction(delta)
-		animation_player_lower.play("idle")
-	else:
-		accelerate_horizontally(x_input, delta)
-		anchor.scale.x = sign(x_input)
-		animation_player_lower.play("run")
-	
-	if not is_on_floor(): # block jump in air
-		animation_player_lower.play("jump")
-	
-	move_and_slide()
+	print(velocity.y, "jump velocity:")
+	match state: 
+		STATES.MOVE:
+			coyote_time -= delta
+			var x_input = Input.get_axis("move_left", "move_right")
+			
+			# DETECTA INÍCIO DA QUEDA
+			if was_on_floor and not is_on_floor():
+				fall_start_position = global_position.y
+			
+			apply_gravity(delta)
+			
+			if not was_on_floor and is_on_floor():
+				var fall_height = global_position.y - fall_start_position
+				check_fall_damage(fall_height)
+			
+			was_on_floor = is_on_floor()
+			
+			if Input.is_action_just_pressed("attack"):
+				animation_player_upper.play("attack")
+			
+			if Input.is_action_just_pressed("jump") and (is_on_floor() or coyote_time > 0):
+				velocity.y = -jump_amount
+			
+			if(x_input == 0):
+				apply_friction(delta)
+				animation_player_lower.play("idle")
+			else:
+				accelerate_horizontally(x_input, delta)
+				anchor.scale.x = sign(x_input)
+				animation_player_lower.play("run")
+			
+			if not is_on_floor(): # block jump in air
+				animation_player_lower.play("jump")
+			var was_on_floor = is_on_floor()
+			move_and_slide()
+			if was_on_floor and not is_on_floor() and velocity.y >= 0:
+				coyote_time = 0.2
+				
+
+			
+		STATES.CLIMB:
+			pass
 
 func accelerate_horizontally(horizontal_direction: float, delta: float) -> void:
 	var acceleration_amount = acceleration
